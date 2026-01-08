@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Poll</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: white;
+            transition: background-color 0.5s ease;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .poll-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .radio-option:hover {
+            background: #e8e8e8;
+            transform: translateX(5px);
+        }
+
+        .radio-option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-right: 15px;
+            accent-color: #333;
+        }
+
+        .radio-option label {
+            flex: 1;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .color-indicator {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            margin-left: auto;
+            margin-right: 10px;
+            border: 2px solid #333;
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background: #999;
+            transition: all 0.3s ease;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .status.active {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Select Your Favorite Color</h1>
+        
+        <div class="poll-options">
+            <div class="radio-option">
+                <input type="radio" id="color-r" name="color" value="R">
+                <label for="color-r">R - Red</label>
+                <div class="color-indicator" style="background-color: #FF0000;"></div>
+            </div>
+            
+            <div class="radio-option">
+                <input type="radio" id="color-g" name="color" value="G">
+                <label for="color-g">G - Green</label>
+                <div class="color-indicator" style="background-color: #00AA00;"></div>
+            </div>
+            
+            <div class="radio-option">
+                <input type="radio" id="color-y" name="color" value="Y">
+                <label for="color-y">Y - Yellow</label>
+                <div class="color-indicator" style="background-color: #FFFF00;"></div>
+            </div>
+            
+            <div class="radio-option">
+                <input type="radio" id="color-b" name="color" value="B">
+                <label for="color-b">B - Blue</label>
+                <div class="color-indicator" style="background-color: #0000FF;"></div>
+            </div>
+        </div>
+
+        <div class="status" id="status">No color selected</div>
+    </div>
+
+    <script>
+        const colorRadios = document.querySelectorAll('input[name="color"]');
+        const statusDiv = document.getElementById('status');
+        const body = document.body;
+
+        const colors = {
+            'R': { name: 'Red', code: '#FF0000' },
+            'G': { name: 'Green', code: '#00AA00' },
+            'Y': { name: 'Yellow', code: '#FFFF00' },
+            'B': { name: 'Blue', code: '#0000FF' }
+        };
+
+        colorRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.checked) {
+                    const colorCode = this.value;
+                    const color = colors[colorCode];
+                    
+                    // Change background color
+                    body.style.backgroundColor = color.code;
+                    
+                    // Update status message
+                    statusDiv.textContent = `Selected: ${color.name}`;
+                    statusDiv.classList.add('active');
+                    
+                    // Determine text color based on background
+                    const isLight = colorCode === 'Y';
+                    statusDiv.style.background = color.code;
+                    statusDiv.style.color = isLight ? '#000' : '#fff';
+                    
+                    // Redirect to color detail page after 1 second
+                    setTimeout(() => {
+                        window.location.href = `/color/${colorCode}`;
+                    }, 1000);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
