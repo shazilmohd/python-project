@@ -39,27 +39,30 @@ log_warn() {
 setup_environment() {
     log_info "Setting up Python environment..."
     
-    # Install system dependencies if needed
-    if ! python3 -m venv --help &> /dev/null; then
-        log_info "Installing system dependencies..."
-        if command -v apt-get &> /dev/null; then
-            sudo apt-get update -qq
-            sudo apt-get install -y python3-venv python3-pip python3-dev > /dev/null 2>&1
-        elif command -v yum &> /dev/null; then
-            sudo yum install -y python3-venv python3-pip python3-devel > /dev/null 2>&1
-        else
-            log_error "Unsupported package manager"
-            return 1
-        fi
-        log_info "System dependencies installed"
-    fi
-    
+    # Try to create venv, if it fails, install dependencies and retry
     if [ ! -d "${VENV_DIR}" ]; then
         log_info "Creating virtual environment..."
-        python3 -m venv "${VENV_DIR}"
+        
+        # First attempt to create venv
+        if ! python3 -m venv "${VENV_DIR}" 2>/dev/null; then
+            log_info "Installing system dependencies (python3-venv not found)..."
+            if command -v apt-get &> /dev/null; then
+                sudo apt-get update -qq 2>/dev/null || true
+                sudo apt-get install -y python3-venv python3-pip python3-dev > /dev/null 2>&1 || true
+            elif command -v yum &> /dev/null; then
+                sudo yum install -y python3-venv python3-pip python3-devel > /dev/null 2>&1 || true
+            fi
+            log_info "Retrying virtual environment creation..."
+            python3 -m venv "${VENV_DIR}" || { log_error "Failed to create venv"; return 1; }
+        fi
     fi
     
     # Activate venv and install dependencies
+    if [ ! -f "${VENV_DIR}/bin/activate" ]; then
+        log_error "Virtual environment activation script not found at ${VENV_DIR}/bin/activate"
+        return 1
+    fi
+    
     source "${VENV_DIR}/bin/activate"
     
     if [ -f "${APP_DIR}/requirements.txt" ]; then
