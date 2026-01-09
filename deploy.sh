@@ -5,7 +5,9 @@
 
 set -e
 
-APP_DIR="/home/user/color-poll"  # Change 'user' to your VirtualBox VM username
+# Get current user (use environment variable if set, otherwise current user)
+CURRENT_USER="${DEPLOY_USER:=$(whoami)}"
+APP_DIR="/home/${CURRENT_USER}/color-poll"
 VENV_DIR="${APP_DIR}/venv"
 LOG_DIR="${APP_DIR}/logs"
 LOG_FILE="${LOG_DIR}/app.log"

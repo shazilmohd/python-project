@@ -156,7 +156,7 @@ pipeline {
                 sh '''
                     ssh -i ~/.ssh/id_rsa_vbox -o StrictHostKeyChecking=no \
                         ${VIRTUALBOX_USER}@${VIRTUALBOX_HOST} \
-                        "bash ${REMOTE_APP_PATH}/deploy.sh start"
+                        "export DEPLOY_USER=${VIRTUALBOX_USER} && bash ${REMOTE_APP_PATH}/deploy.sh start"
                     
                     sleep 3
                     echo "✓ Application started"
