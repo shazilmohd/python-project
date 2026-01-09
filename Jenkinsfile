@@ -235,21 +235,15 @@ pipeline {
             // Archive test results (junit is always available)
             junit testResults: 'test-results/junit.xml', skipPublishingChecks: true
             
-            // Publish HTML reports if HTML Publisher plugin is installed (optional)
-            script {
-                try {
-                    publishHTML([
-                        allowMissing: false,
-                        alwaysLinkToLastBuild: true,
-                        keepAll: true,
-                        reportDir: 'coverage-report',
-                        reportFiles: 'index.html',
-                        reportName: 'Code Coverage Report'
-                    ])
-                } catch (Exception e) {
-                    echo "⚠️ HTML Publisher plugin not installed. Coverage reports available at: coverage-report/index.html"
-                }
-            }
+            // Archive coverage reports for download
+            sh '''
+                if [ -d coverage-report ]; then
+                    echo "📊 Code coverage report available at: coverage-report/index.html"
+                fi
+                if [ -d test-results ]; then
+                    echo "🧪 Test results available at: test-results/junit.xml"
+                fi
+            '''
         }
         
         success {
