@@ -154,9 +154,16 @@ pipeline {
             steps {
                 echo "⚙️ Starting Flask application on VirtualBox..."
                 sh '''
+                    # Debug: Check python3 and venv availability on remote
+                    echo "Debug: Checking remote system..."
                     ssh -i ~/.ssh/id_rsa_vbox -o StrictHostKeyChecking=no \
                         ${VIRTUALBOX_USER}@${VIRTUALBOX_HOST} \
-                        "export DEPLOY_USER=${VIRTUALBOX_USER} && bash ${REMOTE_APP_PATH}/deploy.sh start"
+                        "python3 --version && which python3 && ls -la /home/${VIRTUALBOX_USER}/color-poll/ || true"
+                    
+                    # Run deployment script
+                    ssh -i ~/.ssh/id_rsa_vbox -o StrictHostKeyChecking=no \
+                        ${VIRTUALBOX_USER}@${VIRTUALBOX_HOST} \
+                        "export DEPLOY_USER=${VIRTUALBOX_USER} && bash -x ${REMOTE_APP_PATH}/deploy.sh start"
                     
                     sleep 3
                     echo "✓ Application started"

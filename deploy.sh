@@ -39,30 +39,37 @@ log_warn() {
 setup_environment() {
     log_info "Setting up Python environment..."
     
-    # Try to create venv, if it fails, install dependencies and retry
-    if [ ! -d "${VENV_DIR}" ]; then
-        log_info "Creating virtual environment..."
-        
-        # First attempt to create venv
-        if ! python3 -m venv "${VENV_DIR}" 2>/dev/null; then
-            log_info "Installing system dependencies (python3-venv not found)..."
-            if command -v apt-get &> /dev/null; then
-                sudo apt-get update -qq 2>/dev/null || true
-                sudo apt-get install -y python3-venv python3-pip python3-dev > /dev/null 2>&1 || true
-            elif command -v yum &> /dev/null; then
-                sudo yum install -y python3-venv python3-pip python3-devel > /dev/null 2>&1 || true
-            fi
-            log_info "Retrying virtual environment creation..."
-            python3 -m venv "${VENV_DIR}" || { log_error "Failed to create venv"; return 1; }
-        fi
+    # Pre-install system dependencies first (don't wait for failure)
+    log_info "Ensuring system dependencies are installed..."
+    if command -v apt-get &> /dev/null; then
+        sudo apt-get update -qq 2>/dev/null || true
+        sudo apt-get install -y python3-venv python3-pip python3-dev 2>&1 | grep -i "already\|installed\|done" || true
+    elif command -v yum &> /dev/null; then
+        sudo yum install -y python3-venv python3-pip python3-devel 2>&1 | grep -i "already\|installed\|done" || true
     fi
     
-    # Activate venv and install dependencies
+    if [ ! -d "${VENV_DIR}" ]; then
+        log_info "Creating virtual environment at ${VENV_DIR}..."
+        
+        # Create venv with verbose output on failure
+        if ! python3 -m venv "${VENV_DIR}" 2>&1; then
+            log_error "Failed to create virtual environment"
+            log_error "Trying alternative: python3 -m pip install --user virtualenv"
+            python3 -m pip install --user virtualenv || { log_error "Failed"; return 1; }
+            python3 -m virtualenv "${VENV_DIR}" || { log_error "virtualenv failed"; return 1; }
+        fi
+        log_info "Virtual environment created successfully"
+    fi
+    
+    # Verify activation script exists
     if [ ! -f "${VENV_DIR}/bin/activate" ]; then
         log_error "Virtual environment activation script not found at ${VENV_DIR}/bin/activate"
+        log_error "VENV_DIR contents:"
+        ls -la "${VENV_DIR}/" 2>/dev/null || log_error "Cannot list VENV_DIR"
         return 1
     fi
     
+    # Activate venv and install dependencies
     source "${VENV_DIR}/bin/activate"
     
     if [ -f "${APP_DIR}/requirements.txt" ]; then
