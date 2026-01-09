@@ -16,3 +16,7 @@ Press CTRL+C to quit
 127.0.0.1 - - [09/Jan/2026 01:43:47] "GET / HTTP/1.1" 200 -
 127.0.0.1 - - [09/Jan/2026 01:43:52] "GET /color/B HTTP/1.1" 200 -
 127.0.0.1 - - [09/Jan/2026 01:43:56] "GET / HTTP/1.1" 200 -
+ * Detected change in '/home/shazil/code-experiment/test_app.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 891-511-962
