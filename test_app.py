@@ -40,7 +40,10 @@ class ColorPollTestCase(unittest.TestCase):
         self.assertIn(b'Green', response.data)
         self.assertIn(b'Yellow', response.data)
         self.assertIn(b'Blue', response.data)
+<<<<<<< HEAD
         self.assertIn(b'Purple', response.data)
+=======
+>>>>>>> origin/master
     
     def test_color_detail_page_red(self):
         """Test color detail page for Red"""
@@ -84,14 +87,21 @@ class ColorPollTestCase(unittest.TestCase):
         self.assertIn('G', data)
         self.assertIn('Y', data)
         self.assertIn('B', data)
+<<<<<<< HEAD
         self.assertIn('P', data)
+=======
+>>>>>>> origin/master
     
     def test_api_colors_has_required_fields(self):
         """Test that API returns colors with required fields"""
         response = self.client.get('/api/colors')
         data = json.loads(response.data)
         
+<<<<<<< HEAD
         for color_code in ['R', 'G', 'Y', 'B', 'P']:
+=======
+        for color_code in ['R', 'G', 'Y', 'B']:
+>>>>>>> origin/master
             self.assertIn('name', data[color_code])
             self.assertIn('code', data[color_code])
             self.assertIn('description', data[color_code])
@@ -114,7 +124,11 @@ class ColorPollTestCase(unittest.TestCase):
     
     def test_api_select_color_all_valid(self):
         """Test /api/select-color with all valid colors"""
+<<<<<<< HEAD
         for color in ['R', 'G', 'Y', 'B', 'P']:
+=======
+        for color in ['R', 'G', 'Y', 'B']:
+>>>>>>> origin/master
             response = self.client.post(
                 '/api/select-color',
                 data=json.dumps({'color': color}),
@@ -165,7 +179,11 @@ class ColorPollTestCase(unittest.TestCase):
     
     def test_color_codes_are_valid(self):
         """Test that color codes match expected values"""
+<<<<<<< HEAD
         expected_codes = {'R', 'G', 'Y', 'B', 'P'}
+=======
+        expected_codes = {'R', 'G', 'Y', 'B'}
+>>>>>>> origin/master
         actual_codes = set(colors.keys())
         self.assertEqual(expected_codes, actual_codes)
     
