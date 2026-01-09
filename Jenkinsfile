@@ -114,7 +114,8 @@ pipeline {
                 echo "📦 Building application artifacts..."
                 sh '''
                     mkdir -p build/
-                    cp -r app.py color_poll.py templates/ requirements.txt build/
+                    cp -r app.py color_poll.py templates/ requirements.txt deploy.sh build/
+                    chmod +x build/deploy.sh
                     echo "Build timestamp: $(date)" > build/BUILD_INFO.txt
                     ls -la build/
                 '''
