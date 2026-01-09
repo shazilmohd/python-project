@@ -1,16 +1,54 @@
 pipeline {
     agent any
     
+    parameters {
+        string(
+            name: 'VIRTUALBOX_USER',
+            defaultValue: 'vboxuser',
+            description: 'VirtualBox VM username'
+        )
+        string(
+            name: 'VIRTUALBOX_HOST',
+            defaultValue: '192.168.0.4',
+            description: 'VirtualBox VM IP address'
+        )
+        string(
+            name: 'APP_PORT',
+            defaultValue: '5000',
+            description: 'Flask application port'
+        )
+        string(
+            name: 'VIRTUALBOX_SSH_KEY',
+            defaultValue: 'jenkins-root',
+            description: 'Jenkins credential ID for SSH key'
+        )
+        string(
+            name: 'REMOTE_APP_PATH',
+            defaultValue: '/home/vboxuser/color-poll',
+            description: 'Application deployment path on VirtualBox'
+        )
+        booleanParam(
+            name: 'SKIP_TESTS',
+            defaultValue: false,
+            description: 'Skip unit tests and coverage (for quick deployments)'
+        )
+        booleanParam(
+            name: 'SKIP_DEPLOYMENT',
+            defaultValue: false,
+            description: 'Build and test only, skip VirtualBox deployment'
+        )
+    }
+    
     environment {
         VENV_DIR = "${WORKSPACE}/venv"
         PYTHON_CMD = "${VENV_DIR}/bin/python"
         PIP_CMD = "${VENV_DIR}/bin/pip"
-        APP_PORT = "5000"
-        VIRTUALBOX_USER = "vboxuser"  // Change to your VirtualBox VM username
-        VIRTUALBOX_HOST = "192.168.0.4"  // Change to your VirtualBox VM IP
-        VIRTUALBOX_SSH_KEY = credentials('jenkins-root')  // Jenkins credential
-        REMOTE_APP_PATH = "/home/${VIRTUALBOX_USER}/color-poll"
-        REMOTE_LOG_FILE = "/home/${VIRTUALBOX_USER}/color-poll/logs/app.log"
+        APP_PORT = "${params.APP_PORT}"
+        VIRTUALBOX_USER = "${params.VIRTUALBOX_USER}"
+        VIRTUALBOX_HOST = "${params.VIRTUALBOX_HOST}"
+        VIRTUALBOX_SSH_KEY = credentials("${params.VIRTUALBOX_SSH_KEY}")
+        REMOTE_APP_PATH = "${params.REMOTE_APP_PATH}"
+        REMOTE_LOG_FILE = "${params.REMOTE_APP_PATH}/logs/app.log"
     }
     
     options {
@@ -77,6 +115,9 @@ pipeline {
         }
         
         stage('Unit Tests') {
+            when {
+                expression { !params.SKIP_TESTS }
+            }
             steps {
                 echo "🧪 Running unit tests with coverage..."
                 sh '''
@@ -123,6 +164,9 @@ pipeline {
         }
         
         stage('Deploy to VirtualBox') {
+            when {
+                expression { !params.SKIP_DEPLOYMENT }
+            }
             steps {
                 echo "🚀 Deploying to VirtualBox VM..."
                 sh '''

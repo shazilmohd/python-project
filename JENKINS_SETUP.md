@@ -62,6 +62,26 @@ Copy the content of `~/.ssh/jenkins_key` and paste it into Jenkins credential.
 - **Description**: Color Poll Flask Application CI/CD Pipeline
 - **GitHub project** (optional): `https://github.com/YOUR_USERNAME/color-poll`
 
+### Job Parameters (IMPORTANT!)
+
+The Jenkinsfile uses **parameterized builds**. Configure these parameters in your Jenkins job:
+
+1. In job configuration, find **This project is parameterized** section
+2. Click **Add Parameter** and add each of these:
+
+**String Parameters:**
+- `VIRTUALBOX_USER` → Default: `vboxuser`
+- `VIRTUALBOX_HOST` → Default: `192.168.0.4`
+- `APP_PORT` → Default: `5000`
+- `VIRTUALBOX_SSH_KEY` → Default: `jenkins-root`
+- `REMOTE_APP_PATH` → Default: `/home/vboxuser/color-poll`
+
+**Boolean Parameters:**
+- `SKIP_TESTS` → Default: `false`
+- `SKIP_DEPLOYMENT` → Default: `false`
+
+💡 **Tip**: See `config.properties` in the repo for template values.
+
 ### Build Triggers
 Choose one or more:
 
@@ -98,16 +118,21 @@ Choose one or more:
 - **Lightweight checkout**: Uncheck (to keep full history)
 - Click **Save**
 
-## Step 4: Configure VirtualBox SSH Details
+## Step 4: Configure Build Parameters at Runtime
 
-Before running, **update the Jenkinsfile** with your VirtualBox configuration:
+No need to modify Jenkinsfile! The pipeline is now **fully parameterized**. Just update parameters when running a build:
 
-```groovy
-environment {
-    VIRTUALBOX_USER = "vboxuser"           // Your VM username
-    VIRTUALBOX_HOST = "192.168.56.101"     // Your VM IP address
-    VIRTUALBOX_SSH_KEY = credentials('jenkins-root')  // Jenkins credential ID
-    REMOTE_APP_PATH = "/home/vboxuser/color-poll"
+1. Go to your job → **Build with Parameters** (instead of "Build Now")
+2. Update any values as needed:
+   - VirtualBox IP
+   - Username
+   - Deployment path
+   - Toggle test/deployment skipping
+3. Click **Build**
+
+The parameters work across builds—no need to edit code!
+
+## Step 5: Test the Pipeline
 }
 ```
 
