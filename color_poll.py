@@ -13,7 +13,8 @@ class ColorPoll:
             'R': {'name': 'Red', 'code': '#FF0000'},
             'G': {'name': 'Green', 'code': '#00AA00'},
             'Y': {'name': 'Yellow', 'code': '#FFFF00'},
-            'B': {'name': 'Blue', 'code': '#0000FF'}
+            'B': {'name': 'Blue', 'code': '#0000FF'},
+            'P': {'name': 'Purple', 'code': '#800080'}
         }
         
         # Variable to track selected color
@@ -33,7 +34,7 @@ class ColorPoll:
         poll_frame.pack(pady=20)
         
         # Create radio buttons for each color
-        for color_code in ['R', 'G', 'Y', 'B']:
+        for color_code in ['R', 'G', 'Y', 'B', 'P']:
             color_info = self.colors[color_code]
             radio_btn = tk.Radiobutton(
                 poll_frame,
@@ -74,7 +75,7 @@ class ColorPoll:
             # Update status label
             self.status_label.config(
                 text=f"Selected: {color_name}",
-                fg="white" if selected in ['R', 'B'] else "black"
+                fg="white" if selected in ['R', 'B', 'P'] else "black"
             )
 
 

@@ -1,3 +1,16 @@
+<<<<<<< HEAD
+// Guard: only run this Jenkinsfile on the master branch (or when master is being built).
+// If this Jenkinsfile is evaluated on other branches (e.g., PR/source branches),
+// exit early to avoid running builds. For multibranch pipelines `env.BRANCH_NAME`
+// is provided by Jenkins.
+if (env.BRANCH_NAME && env.BRANCH_NAME != 'master') {
+    println "Skipping pipeline: branch '${env.BRANCH_NAME}' is not 'master'."
+    currentBuild.result = 'NOT_BUILT'
+    return
+}
+
+=======
+>>>>>>> origin/master
 pipeline {
     agent any
     

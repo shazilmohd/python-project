@@ -133,6 +133,12 @@
                 <label for="color-b">B - Blue</label>
                 <div class="color-indicator" style="background-color: #0000FF;"></div>
             </div>
+
+            <div class="radio-option">
+                <input type="radio" id="color-p" name="color" value="P">
+                <label for="color-p">P - Purple</label>
+                <div class="color-indicator" style="background-color: #800080;"></div>
+            </div>
         </div>
 
         <div class="status" id="status">No color selected</div>
@@ -148,6 +154,7 @@
             'G': { name: 'Green', code: '#00AA00' },
             'Y': { name: 'Yellow', code: '#FFFF00' },
             'B': { name: 'Blue', code: '#0000FF' }
+            , 'P': { name: 'Purple', code: '#800080' }
         };
 
         colorRadios.forEach(radio => {
