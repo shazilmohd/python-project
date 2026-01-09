@@ -28,6 +28,26 @@ pipeline {
             }
         }
         
+        stage('Install Dependencies') {
+            steps {
+                echo "📦 Installing system dependencies..."
+                sh '''
+                    # Update package manager and install Python venv
+                    if command -v apt-get &> /dev/null; then
+                        apt-get update
+                        apt-get install -y python3-venv python3-pip python3-dev
+                    elif command -v yum &> /dev/null; then
+                        yum install -y python3-venv python3-pip python3-devel
+                    else
+                        echo "Unsupported package manager"
+                        exit 1
+                    fi
+                    
+                    echo "✓ Dependencies installed"
+                '''
+            }
+        }
+        
         stage('Setup Environment') {
             steps {
                 echo "🛠️ Setting up Python virtual environment..."
@@ -36,6 +56,7 @@ pipeline {
                     . ${VENV_DIR}/bin/activate
                     ${PIP_CMD} install --upgrade pip
                     ${PIP_CMD} install -r requirements.txt
+                    echo "✓ Virtual environment created and dependencies installed"
                 '''
             }
         }
