@@ -48,20 +48,30 @@ setup_environment() {
         sudo yum install -y python3-venv python3-pip python3-devel 2>&1 | grep -i "already\|installed\|done" || true
     fi
     
-    if [ ! -d "${VENV_DIR}" ]; then
-        log_info "Creating virtual environment at ${VENV_DIR}..."
+    # Check if venv activation script exists (not just if directory exists)
+    if [ ! -f "${VENV_DIR}/bin/activate" ]; then
+        log_info "Virtual environment not found or corrupted. Recreating at ${VENV_DIR}..."
+        
+        # Remove corrupted venv if it exists
+        if [ -d "${VENV_DIR}" ]; then
+            log_info "Removing corrupted venv directory..."
+            rm -rf "${VENV_DIR}"
+        fi
         
         # Create venv with verbose output on failure
         if ! python3 -m venv "${VENV_DIR}" 2>&1; then
-            log_error "Failed to create virtual environment"
-            log_error "Trying alternative: python3 -m pip install --user virtualenv"
-            python3 -m pip install --user virtualenv || { log_error "Failed"; return 1; }
+            log_error "Failed to create virtual environment with python3 -m venv"
+            log_info "Trying alternative: installing virtualenv..."
+            python3 -m pip install --user virtualenv || { log_error "Failed to install virtualenv"; return 1; }
+            log_info "Creating venv with virtualenv..."
             python3 -m virtualenv "${VENV_DIR}" || { log_error "virtualenv failed"; return 1; }
         fi
         log_info "Virtual environment created successfully"
+    else
+        log_info "Using existing virtual environment"
     fi
     
-    # Verify activation script exists
+    # Verify activation script exists now
     if [ ! -f "${VENV_DIR}/bin/activate" ]; then
         log_error "Virtual environment activation script not found at ${VENV_DIR}/bin/activate"
         log_error "VENV_DIR contents:"
