@@ -52,6 +52,19 @@ colors = {
             'Mental health - calming effect that reduces stress and anxiety'
         ]
     }
+    ,
+    'P': {
+        'name': 'Purple',
+        'code': '#800080',
+        'description': 'Purple evokes creativity, luxury, and a sense of mystery.',
+        'importance': [
+            'Art & design - used to convey creativity and imagination',
+            'Luxury branding - signals premium and exclusivity',
+            'Spirituality & mindfulness - associated with introspection',
+            'Cosmetics & fashion - represents elegance and uniqueness',
+            'Education & learning - stimulates creative thinking'
+        ]
+    }
 }
 
 @app.route('/')
