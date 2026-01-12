@@ -2,10 +2,9 @@ pipeline {
     agent any
     
     triggers {
-        githubPush(
-            events: [GHPushEvent()],
-            branches: [BranchSpec(compareType: 'EQUALS', compareValue: 'master')]
-        )
+        // Trigger on GitHub push events. Branch filtering is handled by the
+        // job configuration (multibranch pipeline) or by early-stage checks.
+        githubPush()
     }
     
     parameters {
